@@ -23,8 +23,8 @@ const App = () => {
         
        
      <Routes>
-     <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />} />
-     <Route path="/device/:id"  element={isAuthenticated ? <EditUser /> : <Navigate to="/" />} />
+     <Route path="/dashboard" element={ <Dashboard />} />
+     <Route path="/device/:id"  element={ <EditUser /> } />
      <Route path="/" element={<Login />} />
      <Route path="/signUp" element={<SignUp />} />
      
