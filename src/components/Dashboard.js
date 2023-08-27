@@ -42,6 +42,11 @@ const Dashboard = () => {
     navigate(`/device/${userId}`);
   };
  
+  const redirectToAddUser = () =>{
+    navigate('/device');
+  }
+
+
     const handleDelete = (userId) => {
       const confirmed = window.confirm('Are you sure you want to delete device?');
       if(confirmed){
@@ -139,6 +144,9 @@ toast.success('device deleted successfully');
            Next
         </button>
           </div>
+          <button onClick={() => redirectToAddUser()}>
+           Add Device
+        </button>
         </div>
       )}
 
