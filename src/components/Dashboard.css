@@ -1,0 +1,25 @@
+/* Dashboard.css */
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px; /* Add margin for spacing */
+  }
+  
+  .user-table {
+    border-collapse: collapse;
+    width: 70%; /* Set a width for the table */
+    margin-top: 20px; /* Add margin for spacing */
+  }
+  
+  .user-table th, .user-table td {
+    border: 1px solid #ddd; /* Add border to table cells */
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .user-table th {
+    background-color: #f2f2f2; /* Add a light background color to header cells */
+  }
+  

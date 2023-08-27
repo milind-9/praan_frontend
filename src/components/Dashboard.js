@@ -1,0 +1,151 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './Dashboard.css'; // Import your CSS file
+import { useNavigate, useLocation } from 'react-router-dom';
+import LineChart from '../LineChart';
+import TimeFilter from '../TimeFilter';
+import ComparisonChart from '../ComparisonChart';
+import WindiestDaysChart from '../WindiestDaysChart';
+const ITEMS_PER_PAGE = 10; // Number of users per page
+
+const Dashboard = () => {
+  const [showTable, setShowTable] = useState(true);
+  const location = useLocation();
+  const userEdited = location.state && location.state.userEdited;
+  const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [chartData, setChartData] = useState([]);
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem('authToken')
+    const headers = {
+      Authorization: storedToken,
+    };
+    axios.get('https://praan-task.onrender.com/api/devices',{headers})
+      .then(response => {
+        if (response.data.status === false) {
+          toast.error(response.data.message);
+        } else {
+          setUsers(response.data.devices); 
+          setChartData(response.data.devices);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        toast.error('An error occurred while fetching user data.');
+      });
+  }, [userEdited]);
+  const navigate = useNavigate();
+  const handleEdit = (userId) => {
+    // Implement the edit functionality based on the userId
+    navigate(`/device/${userId}`);
+  };
+ 
+    const handleDelete = (userId) => {
+      const confirmed = window.confirm('Are you sure you want to delete device?');
+      if(confirmed){
+        const storedToken = sessionStorage.getItem('authToken')
+    const headers = {
+      Authorization: storedToken,
+    };
+// Implement the delete functionality based on the userId
+axios.delete(`https://praan-task.onrender.com/api/devices/${userId}`,{headers})
+.then(response => {
+  console.log(response.data);
+  setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
+toast.success('device deleted successfully');
+})
+.catch(error => {
+  console.error(error);
+  toast.error('An error occurred while fetching user data.');
+});
+      }
+      
+    };
+  
+  
+    const [filteredData, setFilteredData] = useState(users);
+
+    const handleFilterChange = ({ startTime, endTime }) => {
+     
+      const filtered = users.filter(entry => entry.p >= startTime && entry.p <= endTime);
+      setFilteredData(filtered);
+    }
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const displayedUsers = users.slice(startIndex, endIndex);
+  const handleToggleTable = () => {
+    setShowTable(prevShowTable => !prevShowTable);
+  };
+  return (
+
+
+    <div>
+       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px', marginBottom: '20px' }}>
+        <button style={{ padding: '10px', color: 'black' }} onClick={handleToggleTable}>
+          {showTable ? 'View Devices' : 'Dashboard'}
+        </button>
+      </div>
+
+      {/* Conditionally render the table or charts */}
+      {showTable ? (
+        <div>
+          <h1>Data Visualization Dashboard</h1>
+          <LineChart data={chartData} />
+          <TimeFilter onFilterChange={handleFilterChange} />
+          <ComparisonChart data={chartData} />
+          <WindiestDaysChart data={chartData} />
+        </div>
+      ) : (
+        <div>
+          <table className="table table-dark">
+          <thead>
+    <tr>
+      <th scope="col">Device ID</th>
+      <th scope="col">Wind Direction</th>
+      <th scope="col">Date And Time</th>
+      <th scope="col">Wind Speed</th>
+      <th scope="col">P1</th>
+      <th scope="col">P10</th>
+      <th scope="col">P25</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+       <tbody>
+         {displayedUsers.map(user => (
+            <tr key={user.id}>
+               <td>{user.device_id}</td>
+               <td>{user.h}</td>
+              <td>{user.p}</td>
+              <td>{user.w}</td>
+              <td>{user.p1}</td>
+              <td>{user.p10}</td>
+              <td>{user.p25}</td>
+               <td>
+                 <button onClick={() => handleEdit(user._id)}>Edit</button>
+                 <button onClick={() => handleDelete(user._id)}>Delete</button>
+               </td>
+             </tr>
+           ))}
+         </tbody>
+          </table>
+          <div className="pagination" style={{ 'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'marginTop': '20px' }}>
+          <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
+           Previous
+         </button>
+         <span>{currentPage}</span>
+        <button disabled={endIndex >= users.length} onClick={() => setCurrentPage(currentPage + 1)}>
+           Next
+        </button>
+          </div>
+        </div>
+      )}
+
+      <ToastContainer />
+    </div>
+  );
+
+};
+
+export default Dashboard;
