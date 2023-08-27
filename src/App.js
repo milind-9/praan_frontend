@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard';
 import { BrowserRouter as Router, Routes, Route,Navigate  } from 'react-router-dom';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
+import AddDevice from './components/user/AddDevice';
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
 
@@ -24,7 +25,8 @@ const App = () => {
        
      <Routes>
      <Route path="/dashboard" element={ <Dashboard />} />
-     <Route path="/device/:id"  element={ <EditUser /> } />
+     <Route path="/device" element={<AddDevice />} />
+     <Route path="/device/:id"  element={<EditUser /> } />
      <Route path="/" element={<Login />} />
      <Route path="/signUp" element={<SignUp />} />
      
