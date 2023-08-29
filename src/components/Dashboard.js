@@ -83,6 +83,38 @@ toast.success('device deleted successfully');
   const handleToggleTable = () => {
     setShowTable(prevShowTable => !prevShowTable);
   };
+
+
+   const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const storedToken = sessionStorage.getItem('authToken');
+      const headers = {
+        Authorization: storedToken,
+        'Content-Type': 'multipart/form-data',
+      };
+
+      const response = await axios.post('https://praan-task.onrender.com/api/devices/upload', formData, {
+        headers,
+      });
+
+      if (response.data.status) {
+        toast.success('File uploaded successfully');
+        // You might want to update your data or UI here if necessary
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred while uploading the file.');
+    }
+  };
+
+
+  
   return (
 
 
@@ -120,7 +152,7 @@ toast.success('device deleted successfully');
        <tbody>
          {displayedUsers.map(user => (
             <tr key={user.id}>
-               <td>{user.device_id}</td>
+               <td>{user.device}</td>
                <td>{user.h}</td>
               <td>{user.p}</td>
               <td>{user.w}</td>
@@ -147,6 +179,9 @@ toast.success('device deleted successfully');
           <button onClick={() => redirectToAddUser()}>
            Add Device
         </button>
+             <div style={{ marginTop: '20px' }}>
+            <input type="file" accept=".csv" onChange={handleFileUpload} />
+          </div>
         </div>
       )}
 
