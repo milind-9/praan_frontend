@@ -3,12 +3,14 @@ import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loader from './Loader';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const handleLogin = () => {
-    
+     setLoading(true);
     const credentials = {
       email: email,
       password: password,
@@ -17,6 +19,7 @@ const Login = () => {
     // Perform the API request
     axios.post('https://praan-task.onrender.com/api/auth/login', credentials)
       .then(response => {
+          setLoading(false);
         console.log(response)
         if(response.data.status == true){
           toast.success('Logged in successfully');
@@ -25,6 +28,7 @@ const Login = () => {
 
           
         }else{
+            setLoading(false);
           toast.error(`${response.data.message}`);
         }
         // Handle successful login response
@@ -66,7 +70,7 @@ const Login = () => {
         />
       </div>
       <button style={styles.loginButton} onClick={handleLogin}>
-        Login
+        {loading ? <Loader /> : 'Login'}
       </button>
       <button style={styles.signupButton} onClick={handleSignup} >
         Signup
