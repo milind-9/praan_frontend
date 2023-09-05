@@ -8,9 +8,11 @@ import LineChart from '../LineChart';
 import TimeFilter from '../TimeFilter';
 import ComparisonChart from '../ComparisonChart';
 import WindiestDaysChart from '../WindiestDaysChart';
+import Loader from './Loader';
 const ITEMS_PER_PAGE = 10; // Number of users per page
 
 const Dashboard = () => {
+   const [loading, setLoading] = useState(false);
   const [showTable, setShowTable] = useState(true);
   const location = useLocation();
   const userEdited = location.state && location.state.userEdited;
@@ -18,12 +20,14 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [chartData, setChartData] = useState([]);
   useEffect(() => {
+      setLoading(true);
     const storedToken = sessionStorage.getItem('authToken')
     const headers = {
       Authorization: storedToken,
     };
     axios.get('https://praan-task.onrender.com/api/devices',{headers})
       .then(response => {
+         setLoading(false);
         if (response.data.status === false) {
           toast.error(response.data.message);
         } else {
@@ -32,6 +36,7 @@ const Dashboard = () => {
         }
       })
       .catch(error => {
+         setLoading(false);
         console.error(error);
         toast.error('An error occurred while fetching user data.');
       });
@@ -57,11 +62,13 @@ const Dashboard = () => {
 // Implement the delete functionality based on the userId
 axios.delete(`https://praan-task.onrender.com/api/devices/${userId}`,{headers})
 .then(response => {
+   setLoading(false);
   console.log(response.data);
   setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
 toast.success('device deleted successfully');
 })
 .catch(error => {
+   setLoading(false);
   console.error(error);
   toast.error('An error occurred while fetching user data.');
 });
@@ -126,7 +133,9 @@ toast.success('device deleted successfully');
       </div>
 
       {/* Conditionally render the table or charts */}
-      {showTable ? (
+      {loading ? (
+      <Loader /> // Render the loader when loading is true
+    ) :showTable ? (
         <div>
           <h1>Data Visualization Dashboard</h1>
           <LineChart data={chartData} />
