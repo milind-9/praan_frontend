@@ -11,20 +11,21 @@ import WindiestDaysChart from '../WindiestDaysChart';
 import Loader from './Loader';
 const ITEMS_PER_PAGE = 10; // Number of users per page
 
+
 const Dashboard = () => {
-   const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showTable, setShowTable] = useState(true);
   const location = useLocation();
   const userEdited = location.state && location.state.userEdited;
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [chartData, setChartData] = useState([]);
-    const [Line, setLine] = useState();
-   const [startTime, setStartTime] = useState('00:00'); // Initialize with default values
+  const [Line, setLine] = useState()
+  const [startTime, setStartTime] = useState('00:00'); // Initialize with default values
   const [endTime, setEndTime] = useState('23:59'); 
   const [totalPages, setTotalPages] = useState(1);
 
-   
+
   const goToPreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -36,9 +37,9 @@ const Dashboard = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-   
+
   useEffect(() => {
-      setLoading(true);
+    setLoading(true);
     const storedToken = sessionStorage.getItem('authToken')
     const headers = {
       Authorization: storedToken,
@@ -62,8 +63,12 @@ const Dashboard = () => {
       });
 
 
-     axios.get('https://praan-task.onrender.com/api/devices/chart',{headers})
-       .then(response => {
+
+
+
+
+      axios.get('https://praan-task.onrender.com/api/devices/chart',{headers})
+      .then(response => {
         setLoading(false);
         console.log(response.data,'pppppppppp')
         if (response.data.status === false) {
@@ -80,10 +85,17 @@ const Dashboard = () => {
         toast.error('An error occurred while fetching user data.');
       });
 
-     
+
+
+
+
+
+
+
+
   }, [userEdited,currentPage]);
 
-     const handleNextPage = () => {
+  const handleNextPage = () => {
     // Ensure that the currentPage does not exceed the total number of pages
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -110,22 +122,20 @@ const Dashboard = () => {
 // Implement the delete functionality based on the userId
 axios.delete(`https://praan-task.onrender.com/api/devices/${userId}`,{headers})
 .then(response => {
-   setLoading(false);
   console.log(response.data);
   setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
 toast.success('device deleted successfully');
 })
 .catch(error => {
-   setLoading(false);
   console.error(error);
   toast.error('An error occurred while fetching user data.');
 });
       }
       
     };
-
-
-      const handleTimeFilter = () => {
+  
+  
+    const handleTimeFilter = () => {
       const startHour = new Date();
       startHour.setHours(parseInt(startTime.split(':')[0], 10), parseInt(startTime.split(':')[1], 10), 0, 0);
     
@@ -138,13 +148,12 @@ toast.success('device deleted successfully');
         endTime: endHour.toISOString(),
       };
     
-      // Make an API call with the filter data
+    
       const storedToken = sessionStorage.getItem('authToken');
       const headers = {
         Authorization: storedToken,
       };
-    
-      // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint you want to hit
+   
       axios.get(`https://praan-task.onrender.com/api/devices?from_time=${filter.startTime}&to_time=${filter.endTime}&page=1&perPage=10`, filter, { headers })
         .then(response => {
           setLoading(false);
@@ -159,15 +168,7 @@ toast.success('device deleted successfully');
           toast.error('An error occurred while fetching API data.');
         });
     };
-  
-  
-    const [filteredData, setFilteredData] = useState(users);
-
-    const handleFilterChange = ({ startTime, endTime }) => {
-     
-      const filtered = users.filter(entry => entry.p >= startTime && entry.p <= endTime);
-      setFilteredData(filtered);
-    }
+    
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const displayedUsers = users
@@ -176,7 +177,7 @@ toast.success('device deleted successfully');
   };
 
 
-   const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
@@ -205,7 +206,7 @@ toast.success('device deleted successfully');
   };
 
 
-  
+
   return (
 
 
@@ -217,19 +218,21 @@ toast.success('device deleted successfully');
       </div>
 
       {/* Conditionally render the table or charts */}
-      {loading ? (
+      {
+        loading ? (
       <Loader /> // Render the loader when loading is true
-    ) :showTable ? (
+    ) :
+        showTable ? (
         <div>
           <h1>Data Visualization Dashboard</h1>
           <LineChart data={chartData} />
-          <TimeFilter onFilterChange={handleFilterChange} />
+          <TimeFilter onFilterChange={handleTimeFilter} />
           {Line && <ComparisonChart data={Line} />}
           <WindiestDaysChart data={chartData} />
         </div>
       ) : (
         <div>
-          <div>
+        <div>
         <label>Start Time:</label>
         <input
           type="time"
@@ -279,8 +282,8 @@ toast.success('device deleted successfully');
           <button disabled={currentPage === 1} onClick={goToPreviousPage}>
            Previous
          </button>
-        <span>{currentPage} / {totalPages}</span>
-        <button  disabled={currentPage === totalPages} // Disable the button on the last page
+         <span>{currentPage} / {totalPages}</span>
+         <button  disabled={currentPage === totalPages} // Disable the button on the last page
               onClick={handleNextPage}>
            Next
         </button>
@@ -288,10 +291,12 @@ toast.success('device deleted successfully');
           <button onClick={() => redirectToAddUser()}>
            Add Device
         </button>
-             <div style={{ marginTop: '20px' }}>
+        <div style={{ marginTop: '20px' }}>
             <input type="file" accept=".csv" onChange={handleFileUpload} />
           </div>
         </div>
+
+        
       )}
 
       <ToastContainer />
