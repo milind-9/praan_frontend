@@ -2,25 +2,45 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 const ComparisonChart = ({ data }) => {
-  console.log(data)
+  console.log(data,'==============');
+
+  // Function to map data and generate lines for a specific PM value
+  const renderLines = (dataKey, name, strokeColor) => (
+    <Line
+      type="monotone"
+      dataKey={dataKey}
+      stroke={strokeColor}
+      name={name}
+    />
+  );
+
   return (
     <LineChart width={800} height={400} data={data}>
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="t" />
+      <XAxis dataKey="time" />
       <YAxis />
       <Tooltip />
       <Legend />
-      <Line type="monotone" dataKey="p1" stroke="#8884d8" name="Location A PM 1.0" />
-      <Line type="monotone" dataKey="p25" stroke="#82ca9d" name="Location A PM 2.5" />
-      <Line type="monotone" dataKey="p10" stroke="#ffc658" name="Location A PM 10" />
-      <Line type="monotone" dataKey="p1" stroke="#FF5733" name="Location B PM 1.0" />
-      <Line type="monotone" dataKey="p25" stroke="#FFC300" name="Location B PM 2.5" />
-      <Line type="monotone" dataKey="p10" stroke="#FF5733" name="Location B PM 10" />
-      <Line type="monotone" dataKey="p1" stroke="#00C49F" name="Location C PM 1.0" />
-      <Line type="monotone" dataKey="p25" stroke="#FF7300" name="Location C PM 2.5" />
-      <Line type="monotone" dataKey="p10" stroke="#00C49F" name="Location C PM 10" />
+
+      {/* Render lines for PM1 */}
+      {data.locations.map((location, index) => (
+        renderLines(`locations[${index}].data[].pm1`, `${location.name} PM 1.0`, getRandomColor())
+      ))}
+
+      {/* Render lines for PM2.5 */}
+      {data.locations.map((location, index) => (
+        renderLines(`locations[${index}].data[].pm25`, `${location.name} PM 2.5`, getRandomColor())
+      ))}
+
+      {/* Render lines for PM10 */}
+      {data.locations.map((location, index) => (
+        renderLines(`locations[${index}].data[].pm10`, `${location.name} PM 10`, getRandomColor())
+      ))}
     </LineChart>
   );
 };
+
+// Generate a random color for each line
+const getRandomColor = () => `#${Math.floor(Math.random()*16777215).toString(16)}`;
 
 export default ComparisonChart;
