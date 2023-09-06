@@ -19,32 +19,51 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [chartData, setChartData] = useState([]);
-    const [Line, setLine] = useState()
+    const [Line, setLine] = useState();
+   const [startTime, setStartTime] = useState('00:00'); // Initialize with default values
+  const [endTime, setEndTime] = useState('23:59'); 
+  const [totalPages, setTotalPages] = useState(1);
+
+   
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+   
   useEffect(() => {
       setLoading(true);
     const storedToken = sessionStorage.getItem('authToken')
     const headers = {
       Authorization: storedToken,
     };
-    axios.get('https://praan-task.onrender.com/api/devices',{headers})
+    axios.get(`https://praan-task.onrender.com/api/devices?page=${currentPage}&limit=${ITEMS_PER_PAGE}`,{headers})
       .then(response => {
-         setLoading(false);
+        setLoading(false);
         if (response.data.status === false) {
           toast.error(response.data.message);
         } else {
           setUsers(response.data.devices); 
           setChartData(response.data.devices);
+          setTotalPages(Math.ceil(response.data.totalCount / ITEMS_PER_PAGE));
+
         }
       })
       .catch(error => {
-         setLoading(false);
+        setLoading(false);
         console.error(error);
         toast.error('An error occurred while fetching user data.');
       });
 
 
-     axios.get('http://localhost:4000/api/devices/chart',{headers})
-      .then(response => {
+     axios.get('https://praan-task.onrender.com/api/devices/chart',{headers})
+       .then(response => {
         setLoading(false);
         console.log(response.data,'pppppppppp')
         if (response.data.status === false) {
@@ -62,7 +81,14 @@ const Dashboard = () => {
       });
 
      
-  }, [userEdited]);
+  }, [userEdited,currentPage]);
+
+     const handleNextPage = () => {
+    // Ensure that the currentPage does not exceed the total number of pages
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   const navigate = useNavigate();
   const handleEdit = (userId) => {
     // Implement the edit functionality based on the userId
@@ -97,6 +123,42 @@ toast.success('device deleted successfully');
       }
       
     };
+
+
+      const handleTimeFilter = () => {
+      const startHour = new Date();
+      startHour.setHours(parseInt(startTime.split(':')[0], 10), parseInt(startTime.split(':')[1], 10), 0, 0);
+    
+      const endHour = new Date();
+      endHour.setHours(parseInt(endTime.split(':')[0], 10), parseInt(endTime.split(':')[1], 10), 59, 59, 999);
+    
+      // Create a filter object to send to the API
+      const filter = {
+        startTime: startHour.toISOString(),
+        endTime: endHour.toISOString(),
+      };
+    
+      // Make an API call with the filter data
+      const storedToken = sessionStorage.getItem('authToken');
+      const headers = {
+        Authorization: storedToken,
+      };
+    
+      // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint you want to hit
+      axios.get(`https://praan-task.onrender.com/api/devices?from_time=${filter.startTime}&to_time=${filter.endTime}&page=1&perPage=10`, filter, { headers })
+        .then(response => {
+          setLoading(false);
+          if (response.data.status === false) {
+            toast.error(response.data.message);
+          } else {
+            setUsers(response.data.devices); 
+          }
+        })
+        .catch(error => {
+          setLoading(false);
+          toast.error('An error occurred while fetching API data.');
+        });
+    };
   
   
     const [filteredData, setFilteredData] = useState(users);
@@ -108,7 +170,7 @@ toast.success('device deleted successfully');
     }
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const displayedUsers = users.slice(startIndex, endIndex);
+  const displayedUsers = users
   const handleToggleTable = () => {
     setShowTable(prevShowTable => !prevShowTable);
   };
@@ -167,6 +229,21 @@ toast.success('device deleted successfully');
         </div>
       ) : (
         <div>
+          <div>
+        <label>Start Time:</label>
+        <input
+          type="time"
+          value={startTime}
+          onChange={e => setStartTime(e.target.value)}
+        />
+        <label>End Time:</label>
+        <input
+          type="time"
+          value={endTime}
+          onChange={e => setEndTime(e.target.value)}
+        />
+        <button onClick={handleTimeFilter}>Filter by Time</button>
+      </div>
           <table className="table table-dark">
           <thead>
     <tr>
@@ -199,11 +276,12 @@ toast.success('device deleted successfully');
          </tbody>
           </table>
           <div className="pagination" style={{ 'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', 'marginTop': '20px' }}>
-          <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
+          <button disabled={currentPage === 1} onClick={goToPreviousPage}>
            Previous
          </button>
-         <span>{currentPage}</span>
-        <button disabled={endIndex >= users.length} onClick={() => setCurrentPage(currentPage + 1)}>
+        <span>{currentPage} / {totalPages}</span>
+        <button  disabled={currentPage === totalPages} // Disable the button on the last page
+              onClick={handleNextPage}>
            Next
         </button>
           </div>
