@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [chartData, setChartData] = useState([]);
+    const [Line, setLine] = useState()
   useEffect(() => {
       setLoading(true);
     const storedToken = sessionStorage.getItem('authToken')
@@ -40,6 +41,27 @@ const Dashboard = () => {
         console.error(error);
         toast.error('An error occurred while fetching user data.');
       });
+
+
+     axios.get('http://localhost:4000/api/devices/chart',{headers})
+      .then(response => {
+        setLoading(false);
+        console.log(response.data,'pppppppppp')
+        if (response.data.status === false) {
+          toast.error(response.data.message);
+        } else {
+         console.log(response.data)
+          setLine(response.data.output);
+          console.log(Line)
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        console.error(error);
+        toast.error('An error occurred while fetching user data.');
+      });
+
+     
   }, [userEdited]);
   const navigate = useNavigate();
   const handleEdit = (userId) => {
@@ -140,7 +162,7 @@ toast.success('device deleted successfully');
           <h1>Data Visualization Dashboard</h1>
           <LineChart data={chartData} />
           <TimeFilter onFilterChange={handleFilterChange} />
-          <ComparisonChart data={chartData} />
+          {Line && <ComparisonChart data={Line} />}
           <WindiestDaysChart data={chartData} />
         </div>
       ) : (
