@@ -44,7 +44,7 @@ const Dashboard = () => {
     const headers = {
       Authorization: storedToken,
     };
-    axios.get(`https://praan-task.onrender.com/api/devices?page=${currentPage}&limit=${ITEMS_PER_PAGE}`,{headers})
+    axios.get(`https://praan-task-x116.onrender.com/api/devices?page=${currentPage}&limit=${ITEMS_PER_PAGE}`,{headers})
       .then(response => {
         setLoading(false);
         if (response.data.status === false) {
@@ -67,7 +67,7 @@ const Dashboard = () => {
 
 
 
-      axios.get('https://praan-task.onrender.com/api/devices/chart',{headers})
+      axios.get('https://praan-task-x116.onrender.com/api/devices/chart',{headers})
       .then(response => {
         setLoading(false);
         console.log(response.data,'pppppppppp')
@@ -120,7 +120,7 @@ const Dashboard = () => {
       Authorization: storedToken,
     };
 // Implement the delete functionality based on the userId
-axios.delete(`https://praan-task.onrender.com/api/devices/${userId}`,{headers})
+axios.delete(`https://praan-task-x116.onrender.com/api/devices/${userId}`,{headers})
 .then(response => {
   console.log(response.data);
   setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
@@ -154,7 +154,7 @@ toast.success('device deleted successfully');
         Authorization: storedToken,
       };
    
-      axios.get(`https://praan-task.onrender.com/api/devices?from_time=${filter.startTime}&to_time=${filter.endTime}&page=1&perPage=10`, filter, { headers })
+      axios.get(`https://praan-task-x116.onrender.com/api/devices?from_time=${filter.startTime}&to_time=${filter.endTime}&page=1&perPage=10`, filter, { headers })
         .then(response => {
           setLoading(false);
           if (response.data.status === false) {
@@ -189,7 +189,7 @@ toast.success('device deleted successfully');
         'Content-Type': 'multipart/form-data',
       };
 
-      const response = await axios.post('https://praan-task.onrender.com/api/devices/upload', formData, {
+      const response = await axios.post('https://praan-task-x116.onrender.com/api/devices/upload', formData, {
         headers,
       });
 
