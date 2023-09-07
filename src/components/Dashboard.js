@@ -67,7 +67,7 @@ const Dashboard = () => {
 
 
 
-      axios.get('https://praan-task-x116.onrender.com/api/devices/chart',{headers})
+      axios.get('https://praan-task-x116.onrender.com/api/devices/chart/line',{headers})
       .then(response => {
         setLoading(false);
         console.log(response.data,'pppppppppp')
