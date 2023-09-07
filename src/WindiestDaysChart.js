@@ -3,18 +3,23 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'rec
 
 const getDayOfWeek = (timestamp) => {
   const day = new Date(timestamp).getDay();
-  return day;
+  const options = { weekday: 'long' };
+const dayOfWeek = new Date(day).toLocaleDateString(undefined, options);
+ 
+  return dayOfWeek;
 };
 
 const aggregateWindSpeedsByDay = (data) => {
   const aggregatedData = {};
 
   data.forEach((entry) => {
-    const dayOfWeek = getDayOfWeek(entry.t);
+    const dayOfWeek = getDayOfWeek(entry.p);
     if (!aggregatedData[dayOfWeek]) {
       aggregatedData[dayOfWeek] = { totalWindSpeed: 0, count: 0 };
     }
-    aggregatedData[dayOfWeek].totalWindSpeed += entry.w;
+    const numericString = entry.w.replace(/[^0-9]/g, "");
+    aggregatedData[dayOfWeek].totalWindSpeed += parseFloat(numericString);
+    console.log(aggregatedData[dayOfWeek].totalWindSpeed,'poooooooo',dayOfWeek)
     aggregatedData[dayOfWeek].count += 1;
   });
 
