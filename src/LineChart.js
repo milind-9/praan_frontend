@@ -6,8 +6,8 @@ import generateMockData from './generateMockData'; // Function to generate mock 
 
 
 const LineChartComponent = ({ data }) => {
-  const mockData1 = generateMockData(data.length);
-const mockData2 = generateMockData(data.length);
+  const mockData1 = generateMockData(data);
+const mockData2 = generateMockData(data);
   return (
     <LineChart width={800} height={400} data={data}>
       <CartesianGrid strokeDasharray="3 3" />
