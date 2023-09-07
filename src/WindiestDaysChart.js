@@ -18,7 +18,7 @@ const aggregateWindSpeedsByDay = (data) => {
       aggregatedData[dayOfWeek] = { totalWindSpeed: 0, count: 0 };
     }
    // const numericString = entry.w.replace(/[^0-9]/g, "");
-  //  aggregatedData[dayOfWeek].totalWindSpeed += entry.w;
+    aggregatedData[dayOfWeek].totalWindSpeed += entry.w;
   //  console.log(aggregatedData[dayOfWeek].totalWindSpeed,'poooooooo',dayOfWeek)
     aggregatedData[dayOfWeek].count += 1;
   });
