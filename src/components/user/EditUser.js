@@ -18,7 +18,7 @@ export default function EditUser() {
       // Other fields you want to edit
     });
   
-    useEffect(() => { const getUser = axios.get(`https://praan-task.onrender.com/api/devices/${id}`,{headers})
+    useEffect(() => { const getUser = axios.get(`https://praan-task-x116.onrender.com/api/devices/${id}`,{headers})
     .then((data)=>{
       console.log(data.data)
       setUser(data.data.device);
@@ -51,7 +51,7 @@ export default function EditUser() {
 
   if (confirmed) {
     // Make API call to update user details
-    axios.patch(`https://praan-task.onrender.com/api/devices/${id}`, formData,{headers})
+    axios.patch(`https://praan-task-x116.onrender.com/api/devices/${id}`, formData,{headers})
       .then(response => {
         // Handle success, e.g., show a success message
         navigate('/dashboard', { state: { userEdited: true } });
