@@ -154,7 +154,7 @@ toast.success('device deleted successfully');
         Authorization: storedToken,
       };
    
-      axios.get(`https://praan-task-x116.onrender.com/api/devices?from_time=${filter.startTime}&to_time=${filter.endTime}&page=1&perPage=10`, { headers })
+      axios.get(`https://praan-task-x116.onrender.com/api/devices?from_time=${filter.startTime}&to_time=${filter.endTime}&page=1&limit=10`, { headers })
         .then(response => {
           setLoading(false);
           if (response.data.status === false) {
