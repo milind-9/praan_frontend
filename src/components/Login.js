@@ -17,7 +17,7 @@ const Login = () => {
     };
 
     // Perform the API request
-    axios.post(`${process.env.REACT_APP_HOST}/api/auth/login`, credentials)
+    axios.post(`https://praan-task-x116.onrender.com/api/auth/login`, credentials)
       .then(response => {
           setLoading(false);
         console.log(response)
