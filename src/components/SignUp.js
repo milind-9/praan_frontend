@@ -18,7 +18,7 @@ function SignUp() {
       };
       setLoading(true);
       // Perform the signup API request
-      axios.post(`${process.env.REACT_APP_HOST}/api/auth/signup`, newUser)
+      axios.post(`https://praan-task-x116.onrender.com/api/auth/signup`, newUser)
         .then(response => {
           setLoading(false);
           if (response.data.status === true) {
