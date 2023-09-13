@@ -33,7 +33,7 @@ export default function AddDevice() {
      
   
     // Make API call to update user details
-    axios.post(`${process.env.REACT_APP_HOST}/api/devices/device`, formData,{headers})
+    axios.post(`https://praan-task-x116.onrender.com/api/devices/device`, formData,{headers})
       .then(response => {
         // Handle success, e.g., show a success message
         navigate('/dashboard', { state: { userEdited: true } });
